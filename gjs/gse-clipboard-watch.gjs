@@ -9,7 +9,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
     _init() {
         super._init({
             defaultWidth: 200,
-            defaultHeight: 100,
+            defaultHeight: 64,
             gravity: Gdk.Gravity.STATIC,
             title: "gse-clipboard-watch",
         });
@@ -30,31 +30,18 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
 
         this.add(grid);
 
-        let entry_text = new Gtk.Entry();
+        const buttons = [];
 
-        grid.attach(entry_text, 0, 0, 1, 1);
-
-        let buttonCopyText = new Gtk.Button({ label: "Copiar texto" });
-
-        grid.attach(buttonCopyText, 1, 0, 1, 1);
-
-        let buttonPasteText = new Gtk.Button({ label: "Pegar texto" });
-
-        grid.attach(buttonPasteText, 2, 0, 1, 1);
-
-        let file = '/usr/share/icons/gnome/128x128/apps/org.gnome.ChromeGnomeShell.png';
-        let pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(file, 32, 32);
-        let entry_image = Gtk.Image.new_from_pixbuf(pixbuf);
-
-        grid.attach(entry_image, 0, 1, 1, 1);
-
-        let buttonCopyImage = new Gtk.Button({ label: "Copiar imagen" });
-
-        grid.attach(buttonCopyImage, 1, 1, 1, 1);
-
-        let buttonPasteImage = new Gtk.Button({ label: "Pegar imagen" });
-
-        grid.attach(buttonPasteImage, 2, 1, 1, 1);
+        buttons.push(new Gtk.Button({ label: "" }));
+        buttons.push(new Gtk.Button({ label: "" }));
+        buttons.push(new Gtk.Button({ label: "" }));
+        buttons.push(new Gtk.Button({ label: "" }));
+        buttons.push(new Gtk.Button({ label: "" }));
+        grid.attach(buttons[0], 0, 0, 1, 1);
+        grid.attach(buttons[1], 1, 0, 1, 1);
+        grid.attach(buttons[2], 2, 0, 1, 1);
+        grid.attach(buttons[3], 3, 0, 1, 1);
+        grid.attach(buttons[4], 4, 0, 1, 1);
     }
 
     setPosition() {
@@ -71,7 +58,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
         let width = monitors[current].width;
 
         this.move(x, y);
-        this.resize(width, 100);
+        this.resize(width, 64);
     }
 
     fixPosition() {
