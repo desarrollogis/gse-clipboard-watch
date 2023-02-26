@@ -30,17 +30,12 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
 
         this.add(grid);
         this._buttons = [];
-        this._buttons.push(new Gtk.Button({ label: "" }));
-        this._buttons.push(new Gtk.Button({ label: "" }));
-        this._buttons.push(new Gtk.Button({ label: "" }));
-        this._buttons.push(new Gtk.Button({ label: "" }));
-        this._buttons.push(new Gtk.Button({ label: "" }));
-        grid.set_expand
-        grid.attach(this._buttons[0], 0, 0, 1, 1);
-        grid.attach(this._buttons[1], 1, 0, 1, 1);
-        grid.attach(this._buttons[2], 2, 0, 1, 1);
-        grid.attach(this._buttons[3], 3, 0, 1, 1);
-        grid.attach(this._buttons[4], 4, 0, 1, 1);
+        for (let i = 0, m = 5; i < m; ++i) {
+            const button = new Gtk.Button({ label: "" });
+
+            grid.attach(button, i, 0, 1, 1);
+            this._buttons.push(button);
+        }
 
         const atom = Gdk.Atom.intern('CLIPBOARD', false);
         const clipboard = Gtk.Clipboard.get(atom);
@@ -97,7 +92,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
 
         const text = clipboard.wait_for_text().split()[0];
 
-        for (let i = 4; i > 0; --i) {
+        for (let i = this._buttons.length - 1; i > 0; --i) {
             this._buttons[i].set_label(this._buttons[i - 1].get_label());
         }
         this._buttons[0].set_label(text);
