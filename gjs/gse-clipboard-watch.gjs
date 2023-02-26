@@ -9,7 +9,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
     _init() {
         super._init({
             defaultWidth: 200,
-            defaultHeight: 200,
+            defaultHeight: 100,
             gravity: Gdk.Gravity.STATIC,
             title: "Clipboard Watch",
         });
@@ -73,7 +73,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
         let width = monitors[current].width;
 
         this.move(x, y);
-        this.resize(width, 200);
+        this.resize(width, 100);
     }
 
     fixPosition() {
