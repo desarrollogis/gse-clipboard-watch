@@ -29,19 +29,23 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
         });
 
         this.add(grid);
+        this._buttons = [];
+        this._buttons.push(new Gtk.Button({ label: "" }));
+        this._buttons.push(new Gtk.Button({ label: "" }));
+        this._buttons.push(new Gtk.Button({ label: "" }));
+        this._buttons.push(new Gtk.Button({ label: "" }));
+        this._buttons.push(new Gtk.Button({ label: "" }));
+        grid.set_expand
+        grid.attach(this._buttons[0], 0, 0, 1, 1);
+        grid.attach(this._buttons[1], 1, 0, 1, 1);
+        grid.attach(this._buttons[2], 2, 0, 1, 1);
+        grid.attach(this._buttons[3], 3, 0, 1, 1);
+        grid.attach(this._buttons[4], 4, 0, 1, 1);
 
-        const buttons = [];
+        const atom = Gdk.Atom.intern('CLIPBOARD', false);
+        const clipboard = Gtk.Clipboard.get(atom);
 
-        buttons.push(new Gtk.Button({ label: "" }));
-        buttons.push(new Gtk.Button({ label: "" }));
-        buttons.push(new Gtk.Button({ label: "" }));
-        buttons.push(new Gtk.Button({ label: "" }));
-        buttons.push(new Gtk.Button({ label: "" }));
-        grid.attach(buttons[0], 0, 0, 1, 1);
-        grid.attach(buttons[1], 1, 0, 1, 1);
-        grid.attach(buttons[2], 2, 0, 1, 1);
-        grid.attach(buttons[3], 3, 0, 1, 1);
-        grid.attach(buttons[4], 4, 0, 1, 1);
+        clipboard.connect('owner-change', this._ownerChange.bind(this));
     }
 
     setPosition() {
@@ -82,6 +86,21 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
         let result = proc.communicate_utf8(null, cancellable)[1];
 
         return result;
+    }
+
+    _ownerChange(clipboard) {
+        const isAvailable = clipboard.wait_is_text_available();
+
+        if (!isAvailable) {
+            return;
+        }
+
+        const text = clipboard.wait_for_text().split()[0];
+
+        for (let i = 4; i > 0; --i) {
+            this._buttons[i].set_label(this._buttons[i - 1].get_label());
+        }
+        this._buttons[0].set_label(text);
     }
 });
 
