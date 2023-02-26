@@ -18,7 +18,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
         });
         this.set_name('gse-clipboard-watch');
         //this.set_type_hint(Gdk.WindowTypeHint.DOCK);
-        //this.set_decorated(false);
+        this.set_decorated(false);
         this.setPosition();
 
         let grid = new Gtk.Grid({
@@ -86,7 +86,11 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
                 let [, stdout] = proc.communicate_utf8_finish(result);
 
                 if (proc.get_successful()) {
-                    log(stdout);
+                    let [x, y, width, height] = stdout.trim().split(' ');
+
+                    this.set_type_hint(Gdk.WindowTypeHint.DOCK);
+                    this.move(x, y);
+                    this.resize(width, height);
                 }
             } catch(e) {
                 logError(e);
