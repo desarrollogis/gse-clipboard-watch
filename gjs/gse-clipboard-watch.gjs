@@ -11,13 +11,11 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
             defaultWidth: 200,
             defaultHeight: 100,
             gravity: Gdk.Gravity.STATIC,
-            title: "Clipboard Watch",
+            title: "gse-clipboard-watch",
         });
         this.connect('destroy', () => {
             Gtk.main_quit();
         });
-        this.set_name('gse-clipboard-watch');
-        //this.set_type_hint(Gdk.WindowTypeHint.DOCK);
         this.set_decorated(false);
         this.setPosition();
 
@@ -77,25 +75,26 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
     }
 
     fixPosition() {
-        const {Gio} = imports.gi;
+        const stdout = this._callBashScript(['bash', 'get_absolute_position.sh']).trim();
 
-        let proc = Gio.Subprocess.new(['bash', 'get_absolute_position.sh'], Gio.SubprocessFlags.STDOUT_PIPE);
+        if (stdout == "") {
+            return;
+        }
 
-        proc.communicate_utf8_async(null, null, (proc, result) => {
-            try {
-                let [, stdout] = proc.communicate_utf8_finish(result);
+        const [x, y, width, height] = stdout.split(' ');
 
-                if (proc.get_successful()) {
-                    let [x, y, width, height] = stdout.trim().split(' ');
+        this.set_type_hint(Gdk.WindowTypeHint.DOCK);
+        this.move(x, y);
+        this.resize(width, height);
+        this._callBashScript(['bash', 'set_dock.sh']);
+    }
 
-                    this.set_type_hint(Gdk.WindowTypeHint.DOCK);
-                    this.move(x, y);
-                    this.resize(width, height);
-                }
-            } catch(e) {
-                logError(e);
-            }
-        });
+    _callBashScript(script) {
+        let proc = Gio.Subprocess.new(script, Gio.SubprocessFlags.STDOUT_PIPE);
+        let cancellable = new Gio.Cancellable();
+        let result = proc.communicate_utf8(null, cancellable)[1];
+
+        return result;
     }
 });
 
