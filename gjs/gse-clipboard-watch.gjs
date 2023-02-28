@@ -11,7 +11,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
             defaultWidth: 200,
             defaultHeight: 64,
             gravity: Gdk.Gravity.STATIC,
-            title: "gse-clipboard-watch",
+            title: "gse-clipboard-watch window",
         });
         this.connect('destroy', () => {
             Gtk.main_quit();
