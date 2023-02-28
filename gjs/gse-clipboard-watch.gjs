@@ -15,15 +15,19 @@ var ClipboardButton = GObject.registerClass(class ClipboardButton extends Gtk.Bu
     setText(text) {
         this._text = text;
 
-        const row = text.split("\n")[0].trim();
+        const row = text.split('\n')[0].trim();
         const rowLength = row.length;
-        const label = (rowLength < 16) ? row : row.substring(0, 8) + "..." + row.substring(rowLength - 8);
+        const label = (rowLength < 16) ? row : row.substring(0, 8) + '...' + row.substring(rowLength - 8);
 
         this.set_label(label);
         this.set_tooltip_text(text);
     }
 
     _onClick() {
+        if (this._text == '') {
+            return;
+        }
+
         const atom = Gdk.Atom.intern('CLIPBOARD', false);
         const clipboard = Gtk.Clipboard.get(atom);
 
@@ -41,7 +45,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
             defaultWidth: 200,
             defaultHeight: 64,
             gravity: Gdk.Gravity.STATIC,
-            title: "gse-clipboard-watch window",
+            title: 'gse-clipboard-watch window',
         });
         this.connect('destroy', () => {
             Gtk.main_quit();
@@ -51,11 +55,11 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
 
         let grid = new Gtk.Grid({
             margin: 10,
-            "baseline-row": Gtk.BaselinePosition.CENTER,
-            "column-homogeneous": true,
-            "column-spacing": 10,
-            "row-homogeneous": true,
-            "row-spacing": 10,
+            'baseline-row': Gtk.BaselinePosition.CENTER,
+            'column-homogeneous': true,
+            'column-spacing': 10,
+            'row-homogeneous': true,
+            'row-spacing': 10,
         });
 
         this.add(grid);
@@ -95,7 +99,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
 
         const stdout = this._callBashScript(['bash', 'get_absolute_position.sh']).trim();
 
-        if (stdout == "") {
+        if (stdout == '') {
             return;
         }
 
