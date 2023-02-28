@@ -5,6 +5,35 @@ const { Gtk, GObject, GdkPixbuf, Gdk, Gio } = imports.gi;
 
 Gtk.init(null);
 
+var ClipboardButton = GObject.registerClass(class ClipboardButton extends Gtk.Button {
+    _init() {
+        super._init({});
+        this.setText('');
+        this.connect('clicked', this._onClick.bind(this));
+    }
+
+    setText(text) {
+        this._text = text;
+
+        const row = text.split("\n")[0].trim();
+        const rowLength = row.length;
+        const label = (rowLength < 10) ? row : row.substring(0, 5) + "..." + row.substring(rowLength - 5);
+
+        this.set_label(label);
+    }
+
+    _onClick() {
+        const atom = Gdk.Atom.intern('CLIPBOARD', false);
+        const clipboard = Gtk.Clipboard.get(atom);
+
+        clipboard.set_text(this._text, -1);
+    }
+
+    getText() {
+        return this._text;
+    }
+});
+
 var Window = GObject.registerClass(class Window extends Gtk.Window {
     _init() {
         super._init({
@@ -31,7 +60,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
         this.add(grid);
         this._buttons = [];
         for (let i = 0, m = 5; i < m; ++i) {
-            const button = new Gtk.Button({ label: "" });
+            const button = new ClipboardButton();
 
             grid.attach(button, i, 0, 1, 1);
             this._buttons.push(button);
@@ -91,12 +120,20 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
             return;
         }
 
-        const text = clipboard.wait_for_text().split()[0];
+        const text = clipboard.wait_for_text();
+        let texts = [];
 
-        for (let i = this._buttons.length - 1; i > 0; --i) {
-            this._buttons[i].set_label(this._buttons[i - 1].get_label());
+        texts.push(text);
+        for (let i = 0, m = this._buttons.length; i < m; ++i) {
+            texts.push(this._buttons[i].getText());
         }
-        this._buttons[0].set_label(text);
+        texts = [...new Set(texts)];
+        while (texts.length < this._buttons.length) {
+            texts.push('');
+        }
+        for (let i = 0, m = this._buttons.length; i < m; ++i) {
+            this._buttons[i].setText(texts[i]);
+        }
     }
 });
 
