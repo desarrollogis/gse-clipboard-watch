@@ -17,9 +17,10 @@ var ClipboardButton = GObject.registerClass(class ClipboardButton extends Gtk.Bu
 
         const row = text.split("\n")[0].trim();
         const rowLength = row.length;
-        const label = (rowLength < 10) ? row : row.substring(0, 5) + "..." + row.substring(rowLength - 5);
+        const label = (rowLength < 16) ? row : row.substring(0, 8) + "..." + row.substring(rowLength - 8);
 
         this.set_label(label);
+        this.set_tooltip_text(text);
     }
 
     _onClick() {
@@ -120,7 +121,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
             return;
         }
 
-        const text = clipboard.wait_for_text();
+        const text = clipboard.wait_for_text().trim();
         let texts = [];
 
         texts.push(text);
