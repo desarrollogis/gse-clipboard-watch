@@ -61,6 +61,8 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
     }
 
     fixPosition() {
+        this.set_type_hint(Gdk.WindowTypeHint.DOCK);
+
         const stdout = this._callBashScript(['bash', 'get_absolute_position.sh']).trim();
 
         if (stdout == "") {
@@ -69,7 +71,6 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
 
         const [x, y, width, height] = stdout.split(' ');
 
-        this.set_type_hint(Gdk.WindowTypeHint.DOCK);
         this.move(x, y);
         this.resize(width, height);
         this._callBashScript(['bash', 'set_dock.sh']);
