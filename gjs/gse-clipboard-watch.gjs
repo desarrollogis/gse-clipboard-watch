@@ -43,7 +43,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
     _init() {
         super._init({
             defaultWidth: 200,
-            defaultHeight: 64,
+            defaultHeight: 48,
             gravity: Gdk.Gravity.STATIC,
             title: 'gse-clipboard-watch window',
         });
@@ -54,12 +54,12 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
         this.setPosition();
 
         let grid = new Gtk.Grid({
-            margin: 10,
+            margin: 4,
             'baseline-row': Gtk.BaselinePosition.CENTER,
             'column-homogeneous': true,
-            'column-spacing': 10,
+            'column-spacing': 4,
             'row-homogeneous': true,
-            'row-spacing': 10,
+            'row-spacing': 4,
         });
 
         this.add(grid);
@@ -91,7 +91,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
         let width = monitors[current].width;
 
         this.move(x, y);
-        this.resize(width, 64);
+        this.resize(width, 48);
     }
 
     fixPosition() {
