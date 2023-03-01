@@ -45,9 +45,12 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
             decorated: false,
             defaultWidth: 200,
             defaultHeight: 200,
+            gravity: Gdk.Gravity.STATIC,
             title: 'gse-clipboard-watch window',
         });
-        this._set_position = false;
+        this._get_maximized_info = false;
+        this._move = false;
+        this._resize = false;
         this._dock = false;
         this.connect('window-state-event', this._onWindowStateEvent.bind(this));
         this.connect('destroy', () => {
@@ -56,39 +59,48 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
         this._setGUI();
     }
 
-    _onWindowStateEvent(widget, event) {
-        if (this._set_position) {
-            const state = this.get_window().get_state();
-            const mask = Gdk.WindowState.MAXIMIZED;
+    _onWindowStateEvent() {
+        const [x, y] = this.get_position();
+        const [width, height] = this.get_size();
+        log(['_onWindowStateEvent', this._get_maximized_info, this._move, this._resize, this._dock, x, y, width, height]);
 
-            if ((state & mask) != mask) {
-                return;
+        if (this._get_maximized_info) {
+            if (width > this._defaultWidth) {
+                this._get_maximized_info = false;
+                log(['_get_maximized_info', x, y, width, height]);
+                [this._move, this._x, this._y, this._width, this._height] = [true, x, y, width, 48];
+                this.unmaximize();
             }
-
-            const [width, height] = this.get_size();
-
-            if (width == this._defaultWidth) {
-                return;
-            }
-            this._set_position = false;
-
-            const [x, y] = this.get_position();
-
-            this.unmaximize();
-            this.set_type_hint(Gdk.WindowTypeHint.DOCK);
-            this.move(x, y);
-            this._dock = true;
-            this.resize(width, 48);
-        } else {
-            if (this._dock) {
-                const [width, height] = this.get_size();
-
-                if (height == 48) {
-                    this._callBashScript(['bash', 'set_dock.sh']);
-                    this._dock = true;
-                }
-            }
+            return true;
         }
+        if (this._move) {
+            if (width == this._defaultWidth) {
+                this._move = false;
+                log(['_move', x, y, width, height]);
+                this._resize = true;
+                this.move(this._x, this._y);
+            }
+            return true;
+        }
+        if (this._resize) {
+            if ((x == this._x) && (y == this._y)) {
+                this._resize = false;
+                log(['_resize', x, y, width, height]);
+                this._dock = true;
+                this.resize(this._width, this._height);
+            }
+            return true;
+        }
+        if (this._dock) {
+            if ((width == this._width) && (height == this._height)) {
+                this._dock = false;
+                log(['_dock', x, y, width, height]);
+                this.set_type_hint(Gdk.WindowTypeHint.DOCK);
+                this._callBashScript(['bash', 'set_dock.sh']);
+            }
+            return true;
+        }
+        return true;
     }
 
     _callBashScript(script) {
@@ -148,7 +160,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
 
     dock() {
         [this._defaultWidth, this._defaultHeight] = this.get_size();
-        this._set_position = true;
+        this._get_maximized_info = true;
         this.maximize();
     }
 });
