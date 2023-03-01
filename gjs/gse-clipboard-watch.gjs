@@ -71,7 +71,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
                 [this._move, this._x, this._y, this._width, this._height] = [true, x, y, width, 48];
                 this.unmaximize();
             }
-            return true;
+            return;
         }
         if (this._move) {
             if (width == this._defaultWidth) {
@@ -80,7 +80,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
                 this._resize = true;
                 this.move(this._x, this._y);
             }
-            return true;
+            return;
         }
         if (this._resize) {
             if ((x == this._x) && (y == this._y)) {
@@ -89,7 +89,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
                 this._dock = true;
                 this.resize(this._width, this._height);
             }
-            return true;
+            return;
         }
         if (this._dock) {
             if ((width == this._width) && (height == this._height)) {
@@ -98,9 +98,8 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
                 this.set_type_hint(Gdk.WindowTypeHint.DOCK);
                 this._callBashScript(['bash', 'set_dock.sh']);
             }
-            return true;
+            return;
         }
-        return true;
     }
 
     _callBashScript(script) {
