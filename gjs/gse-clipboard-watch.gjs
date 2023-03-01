@@ -1,3 +1,4 @@
+#!/usr/bin/env gjs
 
 imports.gi.versions.Gtk = '3.0';
 
@@ -94,9 +95,6 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
     }
 
     _onNotifyIsMaximized() {
-        const [x, y] = this.get_position();
-        const [width, height] = this.get_size();
-
         if (this.is_maximized) {
             this.unmaximize();
         } else {
