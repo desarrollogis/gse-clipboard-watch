@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 [ "$1" == "DEBUG" ] && set -x
-XID=$(xdotool search --name "gse-clipboard-watch window")
+[ "$1" == "DEBUG" ] && XID=$(xdotool search --name "gse-clipboard-watch window") || XID=$1
 INFO=$(xwininfo -id "$XID" | grep "X\|Y\|Width\|Height")
 X=$(echo "$INFO" | grep 'Absolute upper-left X:' | awk '{print $4}')
 Y=$(echo "$INFO" | grep 'Absolute upper-left Y:' | awk '{print $4}')

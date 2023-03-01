@@ -1,8 +1,9 @@
 #!/usr/bin/env gjs
 
 imports.gi.versions.Gtk = '3.0';
+imports.gi.versions.GdkX11 = '3.0';
 
-const { Gtk, Gdk, Gio, GLib, GObject } = imports.gi;
+const { Gtk, Gdk, GdkX11, Gio, GLib, GObject } = imports.gi;
 
 Gtk.init(null);
 
@@ -80,7 +81,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
             return;
         }
         if ((x == this._x) && (y == this._y) && (width == this._width) && (height == this._height)) {
-            this._callBashScript(['bash', 'set_dock.sh']);
+            this._callBashScript(['bash', 'set_dock.sh', "" + this.get_window().get_xid()]);
             this.disconnect(this._signal);
             this._signal = false;
         }
