@@ -76,7 +76,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
                 this._x = x;
                 this._y = y;
                 this._width = width;
-                this._height = 48;
+                this._height = 84;
             }
             return;
         }
@@ -105,19 +105,21 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
 
     _setGUI() {
         this._grid = new Gtk.Grid({
-            margin: 4,
+            margin: 2,
             'baseline-row': Gtk.BaselinePosition.CENTER,
             'column-homogeneous': true,
-            'column-spacing': 4,
+            'column-spacing': 2,
             'row-homogeneous': true,
-            'row-spacing': 4,
+            'row-spacing': 2,
         });
         this.add(this._grid);
+        this._label = new Gtk.Label();
+        this._grid.attach(this._label, 0, 0, 5, 1);
         this._buttons = [];
         for (let i = 0, m = 5; i < m; ++i) {
             const button = new ClipboardButton();
 
-            this._grid.attach(button, i, 0, 1, 1);
+            this._grid.attach(button, i, 1, 1, 1);
             this._buttons.push(button);
         }
 
@@ -148,6 +150,7 @@ var Window = GObject.registerClass(class Window extends Gtk.Window {
         for (let i = 0, m = this._buttons.length; i < m; ++i) {
             this._buttons[i].setText(texts[i]);
         }
+        this._label.set_label(text.split('\n')[0].trim());
     }
 });
 
